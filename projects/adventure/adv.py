@@ -22,7 +22,56 @@ world.printRooms()
 player = Player("Name", world.startingRoom)
 
 # Fill this out
+
+'''
+- record traversed rooms
+- add current room
+- 
+- make sure on way back to room you dont have to go retrace steps to go back into each room to get to starter
+as that would add a lot of unneccesary moves (brady)
+'''
+
+
+def oppositeDirection(direction):
+    if direction is 'n':
+        return 's' 
+    elif direction is 's':
+        return 'n'
+    elif direction is 'e':
+        return 'w'
+    elif direction is 'w':
+        return 'e'
+
 traversalPath = []
+entered = {}
+entered[player.currentRoom.id] = player.currentRoom.getExits()
+pathBack = []
+
+
+while len(entered) < (len(roomGraph) - 1):
+    # record room entered if not entered 
+    if player.currentRoom.id not in entered:
+        entered[player.currentRoom.id] = player.currentRoom.getExits()
+        # print(entered[player.currentRoom.id], 'before')
+        print(pathBack)
+        entered[player.currentRoom.id].remove(pathBack[-1])
+        # print(entered[player.currentRoom.id], 'after')
+        
+
+    # if all rooms visited in "wing", go back to next available room that has unentered rooms connected
+    while len(entered[player.currentRoom.id]) is 0 and len(pathBack) > 0:
+        # keep in mind what brady said about not having to take path back to all rooms, just initial
+        # store value of furthest room with no more exits
+        # print(pathBack, 'this')
+        reverse = pathBack.pop()
+        traversalPath.append(reverse)
+        player.travel(reverse)
+
+    move = entered[player.currentRoom.id].pop(0)
+    # append move and reverse back
+    pathBack.append(oppositeDirection(move))
+    traversalPath.append(move)
+    player.travel(move)
 
 
 
